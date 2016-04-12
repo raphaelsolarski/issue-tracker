@@ -22,7 +22,7 @@ public class IssueController {
 
     @RequestMapping(method = RequestMethod.GET)
     List<Issue> getIssues() {
-        return null;
+        return issueService.findAll();
     }
 
 }

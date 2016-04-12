@@ -5,6 +5,8 @@ import com.raphaelsolarski.issuetracker.repository.IssueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class IssueService {
 
@@ -15,4 +17,7 @@ public class IssueService {
         return issueRepository.findOne(id);
     }
 
+    public List<Issue> findAll() {
+        return issueRepository.findAll();
+    }
 }

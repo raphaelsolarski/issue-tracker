@@ -40,6 +40,9 @@ public class IssueControllerIT {
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        Issue issue = new Issue();
+        issue.setTitle("Title1");
+        issueRepository.save(issue);
     }
 
     @Test
@@ -64,6 +67,12 @@ public class IssueControllerIT {
                 .andExpect(jsonPath("$.id").value(issueId))
                 .andExpect(jsonPath("$.description").value("Description"))
                 .andExpect(jsonPath("$.title").value("Title"));
+    }
+
+    @Test
+    public void getIssuesShouldReturnIssuesInJson() throws Exception {
+        mockMvc.perform(get("/issue")).andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
     }
 
 }
