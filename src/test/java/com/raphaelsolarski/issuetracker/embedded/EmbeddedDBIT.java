@@ -28,6 +28,7 @@ public class EmbeddedDBIT {
         Issue issue = new Issue();
         issue.setDescription("test");
         issue.setTitle("test");
+        issue.setUserId(1);
         Integer id = issueRepository.save(issue).getId();
         Issue actual = issueRepository.findOne(id);
         Assert.assertNotNull(actual);

@@ -45,9 +45,9 @@ public class IssueControllerIT {
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        Issue issue = new Issue();
-        issue.setTitle("Title1");
-        issueRepository.save(issue);
+//        Issue issue = new Issue();
+//        issue.setTitle("Title1");
+//        issueRepository.save(issue);
     }
 
     @Test
@@ -65,6 +65,7 @@ public class IssueControllerIT {
         Issue issue = new Issue();
         issue.setTitle("Title");
         issue.setDescription("Description");
+        issue.setUserId(1);
         Issue savedIssue = issueRepository.save(issue);
         Integer issueId = savedIssue.getId();
 
@@ -84,6 +85,7 @@ public class IssueControllerIT {
     public void addIssueShouldAddIssueToDB() throws Exception {
         Issue issueToAdd = new Issue();
         issueToAdd.setTitle("Title");
+        issueToAdd.setUserId(1);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

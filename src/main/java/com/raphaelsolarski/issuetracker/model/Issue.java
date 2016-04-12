@@ -7,10 +7,13 @@ import javax.persistence.*;
 public class Issue {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(nullable = false)
     private String title;
     private String description;
+    @Column(name = "user_id",nullable = false)
+    private Integer userId;
 
     public String getDescription() {
         return description;
@@ -34,5 +37,13 @@ public class Issue {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }
