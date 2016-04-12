@@ -25,4 +25,9 @@ public class IssueController {
         return issueService.findAll();
     }
 
+    @RequestMapping(method = RequestMethod.POST)
+    Issue addIssue(@RequestBody Issue issue) {
+        return issueService.saveIssue(issue);
+    }
+
 }

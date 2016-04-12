@@ -1,8 +1,12 @@
 package com.raphaelsolarski.issuetracker.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.raphaelsolarski.issuetracker.Application;
 import com.raphaelsolarski.issuetracker.model.Issue;
 import com.raphaelsolarski.issuetracker.repository.IssueRepository;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +24,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,7 +68,7 @@ public class IssueControllerIT {
         Issue savedIssue = issueRepository.save(issue);
         Integer issueId = savedIssue.getId();
 
-        mockMvc.perform(get("/issue/"+issueId)).andExpect(status().isOk())
+        mockMvc.perform(get("/issue/" + issueId)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(issueId))
                 .andExpect(jsonPath("$.description").value("Description"))
                 .andExpect(jsonPath("$.title").value("Title"));
@@ -73,6 +78,27 @@ public class IssueControllerIT {
     public void getIssuesShouldReturnIssuesInJson() throws Exception {
         mockMvc.perform(get("/issue")).andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    public void addIssueShouldAddIssueToDB() throws Exception {
+        Issue issueToAdd = new Issue();
+        issueToAdd.setTitle("Title");
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        String issueJson = mapper.writeValueAsString(issueToAdd);
+
+        String response = mockMvc.perform(post("/issue").contentType(MediaType.APPLICATION_JSON_UTF8).content(issueJson))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        Assert.assertNotNull(response);
+        Integer idFromResponse = JsonPath.parse(response).read("$.id");
+        Assert.assertNotNull(idFromResponse);
+
+        Issue issueFromDB = issueRepository.findOne(idFromResponse);
+        Assert.assertNotNull(issueFromDB);
+        Assert.assertEquals("Title", issueFromDB.getTitle());
     }
 
 }

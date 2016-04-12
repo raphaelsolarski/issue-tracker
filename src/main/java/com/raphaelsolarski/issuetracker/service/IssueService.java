@@ -20,4 +20,8 @@ public class IssueService {
     public List<Issue> findAll() {
         return issueRepository.findAll();
     }
+
+    public Issue saveIssue(Issue issue) {
+        return issueRepository.save(issue);
+    }
 }
