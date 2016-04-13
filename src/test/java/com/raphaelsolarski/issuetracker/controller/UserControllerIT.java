@@ -58,4 +58,10 @@ public class UserControllerIT {
         Assert.assertEquals(LOGIN, loginFromResponse);
     }
 
+    @Test
+    public void requestForNonexistentUserShouldReturn404() throws Exception {
+        mockMvc.perform(get("/user/1234").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isNotFound());
+    }
+
 }

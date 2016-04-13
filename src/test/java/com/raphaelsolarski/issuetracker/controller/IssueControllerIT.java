@@ -45,9 +45,6 @@ public class IssueControllerIT {
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-//        Issue issue = new Issue();
-//        issue.setTitle("Title1");
-//        issueRepository.save(issue);
     }
 
     @Test
@@ -103,4 +100,8 @@ public class IssueControllerIT {
         Assert.assertEquals("Title", issueFromDB.getTitle());
     }
 
+    @Test
+    public void requestForNonexistentIssueShouldReturn404() throws Exception {
+        mockMvc.perform(get("/issue/1234").accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
+    }
 }
