@@ -5,6 +5,7 @@ import com.raphaelsolarski.issuetracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,16 +19,17 @@ public class UserController {
     @RequestMapping(path = "/{login}", method = RequestMethod.GET)
     ResponseEntity<User> getUserByLogin(@PathVariable String login) {
         User user = userService.findByLogin(login);
-        if(user != null) {
+        if (user != null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    ResponseEntity<User> addUser(@RequestBody User user) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<User> addUser(@RequestBody User user) {
         User userFromDB = userService.addUser(user);
-        if(userFromDB != null) {
+        if (userFromDB != null) {
             return new ResponseEntity<>(userFromDB, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
