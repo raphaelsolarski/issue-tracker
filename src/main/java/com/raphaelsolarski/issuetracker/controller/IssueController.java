@@ -18,7 +18,7 @@ public class IssueController {
     private IssueService issueService;
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    ResponseEntity<Issue> getIssue(@PathVariable Integer id) {
+    public ResponseEntity<Issue> getIssue(@PathVariable Integer id) {
         Issue issue = issueService.findById(id);
         if (issue != null) {
             return new ResponseEntity<Issue>(issue, HttpStatus.OK);
@@ -27,12 +27,12 @@ public class IssueController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    List<Issue> getIssues() {
+    public List<Issue> getIssues() {
         return issueService.findAll();
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    Issue addIssue(@RequestBody Issue issue) {
+    public Issue addIssue(@RequestBody Issue issue) {
         return issueService.saveIssue(issue);
     }
 

@@ -17,40 +17,40 @@ import java.util.ArrayList;
 @RunWith(MockitoJUnitRunner.class)
 public class UserSecurityServiceTest {
 
+    private static final String USER_PASSWORD = "password";
+    private static final String USER_LOGIN = "user_login";
+    private RolesUtils rolesUtils = new RolesUtils();
     @Mock
     private UserRepository userRepository = Mockito.mock(UserRepository.class);
-
-    private RolesUtils rolesUtils = new RolesUtils();
-
     @InjectMocks
     private UserSecurityService sut = new UserSecurityService(rolesUtils);
 
     @Test
     public void shouldReturnUserWhenLoginFigureInDB() throws Exception {
         User userFromDB = new User();
-        userFromDB.setLogin("user_login");
+        userFromDB.setLogin(USER_LOGIN);
         userFromDB.setId(1);
         userFromDB.setRoles(null);
         userFromDB.setPassword("");
-        Mockito.when(userRepository.findByLogin("user_login")).thenReturn(userFromDB);
+        Mockito.when(userRepository.findByLogin(USER_LOGIN)).thenReturn(userFromDB);
 
-        UserDetails result = sut.loadUserByUsername("user_login");
+        UserDetails result = sut.loadUserByUsername(USER_LOGIN);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals("user_login", result.getUsername());
+        Assert.assertEquals(USER_LOGIN, result.getUsername());
         Assert.assertEquals(0, result.getAuthorities().size());
     }
 
     @Test
     public void shouldReturnAdditionalAuthoritiesWhenThereAreInDB() throws Exception {
         User userFromDB = new User();
-        userFromDB.setLogin("user_login");
+        userFromDB.setLogin(USER_LOGIN);
         userFromDB.setId(1);
         userFromDB.setRoles("ROLE_ADMIN,ROLE_BASIC");
         userFromDB.setPassword("");
-        Mockito.when(userRepository.findByLogin("user_login")).thenReturn(userFromDB);
+        Mockito.when(userRepository.findByLogin(USER_LOGIN)).thenReturn(userFromDB);
 
-        UserDetails result = sut.loadUserByUsername("user_login");
+        UserDetails result = sut.loadUserByUsername(USER_LOGIN);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(2, result.getAuthorities().size());
@@ -59,13 +59,13 @@ public class UserSecurityServiceTest {
     @Test
     public void shouldReturnUserWithPasswordFromDB() throws Exception {
         User userFromDB = new User();
-        userFromDB.setLogin("user_login");
-        userFromDB.setPassword("password");
-        Mockito.when(userRepository.findByLogin("user_login")).thenReturn(userFromDB);
+        userFromDB.setLogin(USER_LOGIN);
+        userFromDB.setPassword(USER_PASSWORD);
+        Mockito.when(userRepository.findByLogin(USER_LOGIN)).thenReturn(userFromDB);
 
-        UserDetails result = sut.loadUserByUsername("user_login");
+        UserDetails result = sut.loadUserByUsername(USER_LOGIN);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals("password", result.getPassword());
+        Assert.assertEquals(USER_PASSWORD, result.getPassword());
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static com.raphaelsolarski.issuetracker.JsonTestUtils.getObjectAsJson;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,12 +37,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class UserControllerIT {
 
+    private static final String USER_LOGIN = "user_login";
+    private static final String NON_EXISTENT_USER_ID = "1234";
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private WebApplicationContext wac;
-
     private MockMvc mockMvc;
 
     @Before
@@ -52,7 +53,7 @@ public class UserControllerIT {
 
     @Test
     public void getUserByLoginShouldReturnJsonWithUser() throws Exception {
-        final String LOGIN = "user_login";
+        final String LOGIN = USER_LOGIN;
         User user = new User();
         user.setLogin(LOGIN);
         user.setPassword("");
@@ -68,14 +69,14 @@ public class UserControllerIT {
 
     @Test
     public void requestForNonexistentUserShouldReturn404() throws Exception {
-        mockMvc.perform(get("/user/1234").accept(MediaType.APPLICATION_JSON_UTF8))
+        mockMvc.perform(get("/user/"+ NON_EXISTENT_USER_ID).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void addUserShouldAddUserToDB() throws Exception {
         User userToAdd = new User();
-        userToAdd.setLogin("user_login");
+        userToAdd.setLogin(USER_LOGIN);
         userToAdd.setPassword("");
         String userJson = getObjectAsJson(userToAdd);
 
@@ -89,13 +90,13 @@ public class UserControllerIT {
 
         User userFromDB = userRepository.findOne(idFromResponse);
         Assert.assertNotNull(userFromDB);
-        Assert.assertEquals("user_login", userFromDB.getLogin());
+        Assert.assertEquals(USER_LOGIN, userFromDB.getLogin());
     }
 
     @Test
     public void tryToAddUserWithTheSameLoginShouldReturn409() throws Exception {
         User userToAdd = new User();
-        userToAdd.setLogin("user_login");
+        userToAdd.setLogin(USER_LOGIN);
         userToAdd.setPassword("");
         userRepository.save(userToAdd);
 
@@ -105,4 +106,16 @@ public class UserControllerIT {
                 .andExpect(status().isConflict());
     }
 
+    @Test
+    public void deleteUserShouldDeleteUserFromDB() throws Exception {
+        User userToAdd = new User();
+        userToAdd.setLogin(USER_LOGIN);
+        userToAdd.setPassword("");
+        Integer id = userRepository.save(userToAdd).getId();
+
+        mockMvc.perform(delete("/user/login/" + USER_LOGIN))
+                .andExpect(status().isOk());
+
+        Assert.assertFalse(userRepository.exists(id));
+    }
 }

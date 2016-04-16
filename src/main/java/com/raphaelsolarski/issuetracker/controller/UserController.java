@@ -17,7 +17,7 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping(path = "/{login}", method = RequestMethod.GET)
-    ResponseEntity<User> getUserByLogin(@PathVariable String login) {
+    public ResponseEntity<User> getUserByLogin(@PathVariable String login) {
         User user = userService.findByLogin(login);
         if (user != null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
@@ -33,6 +33,12 @@ public class UserController {
             return new ResponseEntity<>(userFromDB, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
+    @RequestMapping(path = "/login/{userLogin}", method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void deleteUserByLogin(@PathVariable String userLogin) {
+        userService.deleteByLogin(userLogin);
     }
 
 }

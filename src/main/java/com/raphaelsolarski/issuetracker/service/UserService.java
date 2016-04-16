@@ -23,4 +23,10 @@ public class UserService {
         }
     }
 
+    public void deleteByLogin(String login) {
+        User userToDelete = userRepository.findByLogin(login);
+        if (userToDelete != null) {
+            userRepository.delete(userToDelete);
+        }
+    }
 }

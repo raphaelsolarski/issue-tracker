@@ -1,7 +1,5 @@
 package com.raphaelsolarski.issuetracker.controller;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.raphaelsolarski.issuetracker.Application;
 import com.raphaelsolarski.issuetracker.JsonTestUtils;
@@ -35,12 +33,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class IssueControllerIT {
 
+    private static final String NON_EXISTENT_ISSUE_ID = "1234";
+    private static final String ISSUE_TITLE = "Title";
+    private static final String ISSUE_DESCRIPTION = "Description";
     @Autowired
     private IssueRepository issueRepository;
-
     @Autowired
     private WebApplicationContext wac;
-
     private MockMvc mockMvc;
 
     @Before
@@ -62,16 +61,16 @@ public class IssueControllerIT {
     @Test
     public void getIssueShouldReturnIssueFromDB() throws Exception {
         Issue issue = new Issue();
-        issue.setTitle("Title");
-        issue.setDescription("Description");
+        issue.setTitle(ISSUE_TITLE);
+        issue.setDescription(ISSUE_DESCRIPTION);
         issue.setUserId(1);
         Issue savedIssue = issueRepository.save(issue);
         Integer issueId = savedIssue.getId();
 
         mockMvc.perform(get("/issue/" + issueId)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(issueId))
-                .andExpect(jsonPath("$.description").value("Description"))
-                .andExpect(jsonPath("$.title").value("Title"));
+                .andExpect(jsonPath("$.description").value(ISSUE_DESCRIPTION))
+                .andExpect(jsonPath("$.title").value(ISSUE_TITLE));
     }
 
     @Test
@@ -83,7 +82,7 @@ public class IssueControllerIT {
     @Test
     public void addIssueShouldAddIssueToDB() throws Exception {
         Issue issueToAdd = new Issue();
-        issueToAdd.setTitle("Title");
+        issueToAdd.setTitle(ISSUE_TITLE);
         issueToAdd.setUserId(1);
 
         String issueJson = JsonTestUtils.getObjectAsJson(issueToAdd);
@@ -97,11 +96,11 @@ public class IssueControllerIT {
 
         Issue issueFromDB = issueRepository.findOne(idFromResponse);
         Assert.assertNotNull(issueFromDB);
-        Assert.assertEquals("Title", issueFromDB.getTitle());
+        Assert.assertEquals(ISSUE_TITLE, issueFromDB.getTitle());
     }
 
     @Test
     public void requestForNonexistentIssueShouldReturn404() throws Exception {
-        mockMvc.perform(get("/issue/1234").accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/issue/" + NON_EXISTENT_ISSUE_ID).accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
     }
 }
