@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.raphaelsolarski.issuetracker.Application;
+import com.raphaelsolarski.issuetracker.JsonTestUtils;
 import com.raphaelsolarski.issuetracker.model.Issue;
 import com.raphaelsolarski.issuetracker.repository.IssueRepository;
 import org.junit.Assert;
@@ -45,6 +46,7 @@ public class IssueControllerIT {
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        issueRepository.deleteAll();
     }
 
     @Test
@@ -84,9 +86,7 @@ public class IssueControllerIT {
         issueToAdd.setTitle("Title");
         issueToAdd.setUserId(1);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        String issueJson = mapper.writeValueAsString(issueToAdd);
+        String issueJson = JsonTestUtils.getObjectAsJson(issueToAdd);
 
         String response = mockMvc.perform(post("/issue").contentType(MediaType.APPLICATION_JSON_UTF8).content(issueJson))
                 .andExpect(status().isOk())

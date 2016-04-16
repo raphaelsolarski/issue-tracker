@@ -19,8 +19,18 @@ public class UserController {
     ResponseEntity<User> getUserByLogin(@PathVariable String login) {
         User user = userService.findByLogin(login);
         if(user != null) {
-            return new ResponseEntity<User>(user, HttpStatus.OK);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         }
-        return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @RequestMapping(method = RequestMethod.POST)
+    ResponseEntity<User> addUser(@RequestBody User user) {
+        User userFromDB = userService.addUser(user);
+        if(userFromDB != null) {
+            return new ResponseEntity<>(userFromDB, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
 }

@@ -15,4 +15,12 @@ public class UserService {
         return userRepository.findByLogin(login);
     }
 
+    public User addUser(User user) {
+        if (userRepository.findByLogin(user.getLogin()) == null) {
+            return userRepository.save(user);
+        } else {
+            return null;
+        }
+    }
+
 }

@@ -1,7 +1,11 @@
 package com.raphaelsolarski.issuetracker.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.raphaelsolarski.issuetracker.Application;
+import com.raphaelsolarski.issuetracker.JsonTestUtils;
 import com.raphaelsolarski.issuetracker.model.User;
 import com.raphaelsolarski.issuetracker.repository.UserRepository;
 import org.junit.Assert;
@@ -20,7 +24,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static com.raphaelsolarski.issuetracker.JsonTestUtils.getObjectAsJson;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -41,6 +47,7 @@ public class UserControllerIT {
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -62,6 +69,38 @@ public class UserControllerIT {
     public void requestForNonexistentUserShouldReturn404() throws Exception {
         mockMvc.perform(get("/user/1234").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void addUserShouldAddUserToDB() throws Exception {
+        User userToAdd = new User();
+        userToAdd.setLogin("user_login");
+
+        String userJson = getObjectAsJson(userToAdd);
+
+        String response = mockMvc.perform(post("/user").contentType(MediaType.APPLICATION_JSON_UTF8).content(userJson))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        Assert.assertNotNull(response);
+
+        Integer idFromResponse = JsonPath.parse(response).read("$.id");
+        Assert.assertNotNull(idFromResponse);
+
+        User userFromDB = userRepository.findOne(idFromResponse);
+        Assert.assertNotNull(userFromDB);
+        Assert.assertEquals("user_login", userFromDB.getLogin());
+    }
+
+    @Test
+    public void tryToAddUserWithTheSameLoginShouldReturn409() throws Exception {
+        User userToAdd = new User();
+        userToAdd.setLogin("user_login");
+        userRepository.save(userToAdd);
+
+        String userJson = getObjectAsJson(userToAdd);
+
+        mockMvc.perform(post("/user").contentType(MediaType.APPLICATION_JSON_UTF8).content(userJson))
+                .andExpect(status().isConflict());
     }
 
 }
