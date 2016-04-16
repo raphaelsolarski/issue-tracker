@@ -11,6 +11,9 @@ public class User {
     private Integer id;
     @Column(nullable = false)
     private String login;
+    private String roles;
+    @Column(nullable = false)
+    private String password;
 
     public Integer getId() {
         return id;
@@ -26,5 +29,21 @@ public class User {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

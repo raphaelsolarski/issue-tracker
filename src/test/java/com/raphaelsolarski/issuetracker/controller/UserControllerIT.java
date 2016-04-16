@@ -55,6 +55,7 @@ public class UserControllerIT {
         final String LOGIN = "user_login";
         User user = new User();
         user.setLogin(LOGIN);
+        user.setPassword("");
         userRepository.save(user);
 
         String responseContent = mockMvc.perform(get("/user/" + LOGIN).accept(MediaType.APPLICATION_JSON_UTF8))
@@ -75,7 +76,7 @@ public class UserControllerIT {
     public void addUserShouldAddUserToDB() throws Exception {
         User userToAdd = new User();
         userToAdd.setLogin("user_login");
-
+        userToAdd.setPassword("");
         String userJson = getObjectAsJson(userToAdd);
 
         String response = mockMvc.perform(post("/user").contentType(MediaType.APPLICATION_JSON_UTF8).content(userJson))
@@ -95,6 +96,7 @@ public class UserControllerIT {
     public void tryToAddUserWithTheSameLoginShouldReturn409() throws Exception {
         User userToAdd = new User();
         userToAdd.setLogin("user_login");
+        userToAdd.setPassword("");
         userRepository.save(userToAdd);
 
         String userJson = getObjectAsJson(userToAdd);
