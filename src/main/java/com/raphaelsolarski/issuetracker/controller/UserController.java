@@ -37,8 +37,13 @@ public class UserController {
 
     @RequestMapping(path = "/login/{userLogin}", method = RequestMethod.DELETE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void deleteUserByLogin(@PathVariable String userLogin) {
-        userService.deleteByLogin(userLogin);
+    public ResponseEntity deleteUserByLogin(@PathVariable String userLogin) {
+        boolean result = userService.deleteByLogin(userLogin);
+        if(result) {
+            return new ResponseEntity(HttpStatus.OK);
+        } else {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
     }
 
 }

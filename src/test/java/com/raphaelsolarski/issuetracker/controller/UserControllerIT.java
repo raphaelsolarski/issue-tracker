@@ -39,6 +39,7 @@ public class UserControllerIT {
 
     private static final String USER_LOGIN = "user_login";
     private static final String NON_EXISTENT_USER_ID = "1234";
+    public static final String NON_EXISTENT_USER_LOGIN = "non_existent_user_login";
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -118,4 +119,11 @@ public class UserControllerIT {
 
         Assert.assertFalse(userRepository.exists(id));
     }
+
+    @Test
+    public void deleteNonexistentUserReturnNotFound() throws Exception {
+        mockMvc.perform(delete("/user/login/" + NON_EXISTENT_USER_LOGIN))
+                .andExpect(status().isNotFound());
+    }
+
 }
