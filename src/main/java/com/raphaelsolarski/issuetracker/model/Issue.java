@@ -1,14 +1,13 @@
 package com.raphaelsolarski.issuetracker.model;
 
+import com.raphaelsolarski.issuetracker.model.base.BaseEntity;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "issues")
-public class Issue {
+public class Issue extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
     @Column(nullable = false)
     private String title;
     private String description;
@@ -29,14 +28,6 @@ public class Issue {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Integer getUserId() {

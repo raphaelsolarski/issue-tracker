@@ -1,27 +1,18 @@
 package com.raphaelsolarski.issuetracker.model;
 
+import com.raphaelsolarski.issuetracker.model.base.BaseEntity;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
     @Column(nullable = false)
     private String login;
     private String roles;
     @Column(nullable = false)
     private String password;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getLogin() {
         return login;
