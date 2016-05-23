@@ -1,0 +1,4 @@
+database.driver = org.postgresql.Driver
+database.url = jdbc:postgresql://localhost/issue_tracker
+database.username = username
+database.password = password
