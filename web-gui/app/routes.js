@@ -6,6 +6,10 @@ define('routes', ['./app'], function (app) {
                 .when('/welcome', {
                     templateUrl: 'app/welcome/welcome.html'
                 })
-                .otherwise({redirectTo: '/welcome'});
+                .when('/dashboard', {
+                    templateUrl: 'app/dashboard/dashboard.html',
+                    controller: 'DashboardController'
+                })
+                .otherwise({redirectTo: '/dashboard'});
         }]);
 });

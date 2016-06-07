@@ -1,11 +1,13 @@
 define([
     'angular',
-    'angularRoute'
+    'angularRoute',
+    'dashboard/index'
 ], function (angular) {
     'use strict';
 
     var app = angular.module('app', [
-            'ngRoute'])
+            'ngRoute',
+            'app.dashboard'])
         .run(run);
 
     return app;
